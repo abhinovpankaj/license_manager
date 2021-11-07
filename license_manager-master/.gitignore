@@ -1,0 +1,7 @@
+node_modules/*
+.DS_Store
+web-ui/.DS_Store
+tmp/*
+.idea/*
+test/node_modules/*
+.jshintrc

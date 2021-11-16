@@ -8,23 +8,29 @@ var path = require('path');
 const users = require("./data/userdb");
 const bcrypt=require('bcrypt');
 var jwt = require('jsonwebtoken');
+const auth=require('./authorize')
+const Role=require('./data/role');
+const { nextTick } = require('process');
+
 
 require("dotenv").config();
 
 //---------- SOFTWARE ------------//
+function getAll(req, res) {
+    software.getAllSoftware(function (err, records) {
+        if (err) { res.status(err.status).send(err.message); }
+        else { res.json(records); }
+    });
+}
 router.route('/software')
-    .get(function (req, res) {
-        software.getAllSoftware(function (err, records) {
-            if (err) { res.status(err.status).send(err.message); }
-            else { res.json(records); }
-        });
-    })
+    .get(auth(Role.Admin),getAll)
     .post(function (req, res) {
         software.addSoftware(req.body, function (err, result) {
             if (err) { res.status(err.status).send(err.message); }
             else { res.json(result); }
         });
     });
+
 router.route('/software/:softwareId')
     .get(function (req, res) {
         software.getSoftware(req.params.softwareId, function (err, record) {
@@ -151,7 +157,7 @@ router.route('/software/licenses/activations/activate') //assuming POST: license
 
 //User registration + Login
 
-// Register
+// Register user
 router.route('/register')
 .post( function(req, res)  {
 
@@ -170,7 +176,7 @@ try {
     users.getUser(email, function (err, record) {
   
         if (record) {
-        return res.status(409).send("User Already Exist. Please Login");
+             res.status(409).send("User Already Exist. Please Login");
         }   
     });
     
@@ -181,6 +187,7 @@ try {
     users.addUser({
       first_name,
       last_name,
+      
       email: email.toLowerCase(), // sanitize: convert email to lowercase
       password: encryptedPassword,
     },function(err,result){
@@ -208,7 +215,66 @@ try {
   }
   
 });
+//register admin
+router.route('/registerAdmin')
+.post( function(req, res)  {
 
+try {
+    // Get user input
+    const { first_name, last_name, email, password, appSecret } = req.body;
+
+    // Validate user input
+    if (!(email && password && first_name && last_name)) {
+      res.status(400).send("All input is required");
+    }
+    if(appSecret!==process.env.APP_SECRET){
+        res.status(400).send("Please contact administrator to register as an Admin");
+    }
+    // check if user already exist
+    // Validate if user exist in our database
+    
+    users.getUser(email, function (err, record) {
+  
+        if (record) {
+            res.status(409).send("User Already Exist. Please Login");
+        }   
+    });
+    
+    //Encrypt user password
+    var encryptedPassword =  bcrypt.hash(password, 10);
+
+    // Create user in our database
+    users.addAdmin({
+      first_name,
+      last_name,
+      
+      email: email.toLowerCase(), // sanitize: convert email to lowercase
+      password: encryptedPassword,
+    },function(err,result){
+        if (err) { res.status(err.status).send(err.message); }
+            else {
+                const user = result;
+                // Create token
+                const token = jwt.sign(
+                { user_id: user._id, email },
+                process.env.TOKEN_KEY,
+                {
+                expiresIn: "2h",
+                });
+                // save user token
+                user.token = token;
+            
+                // return new user
+                res.status(201).json(user);
+             }
+    });
+
+    
+  } catch (err) {
+    console.log(err);
+  }
+  
+});
 
 // Login
 router.route('/login')

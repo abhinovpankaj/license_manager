@@ -1,12 +1,12 @@
 "use strict";
 var ObjectId = require('mongodb').ObjectID;
 var mongo = require('./mongo');
-
+const Role = require('./role');
 //---------- USER ------------//
 
 var addUser = function (user, callback) {
     mongo.Users.insert({last_name: user.last_name,first_name:user.first_name,email:user.email,
-    password:user.password}, {w: 1}, function (err, result) {
+    password:user.password,role:Role.User}, {w: 1}, function (err, result) {
         if (err) {
             var error = new Error("addUser()." + err.message);
             error.status = err.status;
@@ -16,7 +16,18 @@ var addUser = function (user, callback) {
         callback(null, result);
     });
 };
-
+var addAdmin = function (user, callback) {
+    mongo.Users.insert({last_name: user.last_name,first_name:user.first_name,email:user.email,
+    password:user.password,role:Role.Admin}, {w: 1}, function (err, result) {
+        if (err) {
+            var error = new Error("addAdmin()." + err.message);
+            error.status = err.status;
+            callback (error);
+            return;
+        }
+        callback(null, result);
+    });
+};
 var getUser = function (emailId, callback) {
     
     mongo.Users.findOne({ email: emailId }, function (err, result) {
@@ -77,6 +88,7 @@ var removeUser = function (id, callback) {
 module.exports = {
     addUser: addUser,
     getUser: getUser,
+    addAdmin:addAdmin,
     getAllUser: getAllUser,
     removeUser: removeUser
 };

@@ -2,7 +2,6 @@
 var ObjectId = require('mongodb').ObjectID;
 var mongo = require('./mongo');
 const Role = require('./role');
-//---------- USER ------------//
 
 var addUser = function (user, callback) {
     mongo.Users.insert({last_name: user.last_name,first_name:user.first_name,email:user.email,

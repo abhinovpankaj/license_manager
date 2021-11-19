@@ -21,6 +21,6 @@ angular.module('appConfigurations', []).config(function ($routeProvider) {
     }).when('/404', {
         templateUrl: 'partials/error.html'
     }).when('/', {
-        redirectTo: '/software'
+        redirectTo: '/home'
     }).otherwise({redirectTo: '/404'});
 });

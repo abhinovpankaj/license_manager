@@ -49,11 +49,41 @@ angular.module('appControllers', []).controller('SoftwareController', function (
 })
 .controller('HomeController', function ($scope, $location, HomeFactory) {
     $scope.status = new HomeFactory();
+    
     let token = localStorage.getItem("licensemanage_token");
     if (token) {
         $location.path('/software')
     }
+    $scope.loginInfo = {};
+    $scope.registerInfo = {};
+    $scope.errorMessage = "";
     
+    $scope.login = function () {
+        console.log($scope.loginInfo);
+        $scope.status.$login({email: $scope.loginInfo.email, password: $scope.loginInfo.password}, function(res) {
+            if (res.err) {
+                alert (res.msg);
+            } else {
+                localStorage.setItem("licensemanage_token", res.token);
+                $location.path("/software");
+            }
+        });
+    }
+
+    $scope.register = function () {
+        //simple validation
+        if ($scope.registerInfo.password != $scope.registerInfo.passwordConfirm) {
+            alert("Password and confirm doesn't match.");
+            return ;
+        }
+        $scope.status.$register({...$scope.registerInfo}, function (res) {
+            if (res.err) {
+                alert (res.msg);
+            } else {
+                alert ("You are successfuly registered.");
+            }
+        });
+    }
 })
 .controller('LicensesController', function ($scope, $location, $routeParams, SoftwareFactory, LicensesFactory) {
     $scope.isShown = false;

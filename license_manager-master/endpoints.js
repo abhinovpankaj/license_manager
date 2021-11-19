@@ -12,6 +12,7 @@ const auth=require('./authorize')
 const Role=require('./data/role');
 const { nextTick } = require('process');
 const { RSA_NO_PADDING } = require('constants');
+const User = require('./data/user');
 
 
 require("dotenv").config();
@@ -23,6 +24,66 @@ function getAll(req, res) {
         else { res.json(records); }
     });
 }
+router.route('/auth')
+    .post(async function (req, res) {
+        console.log(req.query);
+        const login = {
+            email: req.query.email,
+            password: req.query.password
+        }
+        console.log(login);
+        try {
+            User.findOne({
+                email: login.email
+            }, async function (err, user) {
+                if (err || !user) {        
+                    res.json({
+                        err: "Wrong Login Details"
+                    })
+                } else {
+                    let match = await user.compareUserPassword(login.password, user.password);
+                    if (match) {
+                        let token = await user.generateJwtToken({
+                            user
+                        }, "secret", {
+                            expiresIn: 604800
+                        })
+                        if (token) {
+                            res.status(200).json({
+                                success: true,
+                                token: token,
+                                userCredentials: user
+                            })
+                        }
+                    } else {
+                        res.status(400).json({err: "Wrong Details"})
+                    }
+                }
+            });
+
+        } catch (err) {
+            res.json(err)
+        }
+    })
+    .put(async function (req, res) {    
+        try {
+            let user = new User({
+                ...req.query
+            })
+            user.password = await user.hashPassword(req.query.password);
+            console.log(user);
+            user.save().then(
+                res.status(200).json({msg: "success"})
+            ).catch(err => res.json(err));
+            // let createdUser = await user.save();
+            // res.status(200).json({
+            //     msg: "New user created",
+            //     data: createdUser
+            // })
+        } catch (err) {
+            res.json({err});
+        }
+    })
 router.route('/software')
     .get(getAll)
     .post(function (req, res) {

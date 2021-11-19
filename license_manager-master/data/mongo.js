@@ -3,7 +3,7 @@ var MongoClient = require('mongodb').MongoClient;
 var connection = require('./connection.json').development;
 const mongoose = require("mongoose");
 var assert = require('assert');
-function getdbUrl(){
+const getdbUrl = function (){
     var url = '';
     if (connection.user.length == 0 || connection.user == ' ') {
         url =  'mongodb://' + connection.url + ':' + connection.port + '/' + connection.db;
@@ -39,5 +39,6 @@ var runDB = function (callback) {
 };
 
 module.exports = {
-    runDB: runDB
+    runDB: runDB,
+    getdbUrl
 };

@@ -5,6 +5,7 @@ var path = require('path');
 var bodyParser = require('body-parser');
 var router = require('./endpoints');
 var mongo = require('./data/mongo');
+var mongoose = require('mongoose');
 
 app.use(bodyParser.json());
 
@@ -36,6 +37,11 @@ app.use(function (err, req, res) {
     res.send(err.status + ': Internal Server Error\n\r' + err.message);
 });
 
+mongoose.connect(mongo.getdbUrl()).then(connection => console.log("Application is connected to db")).catch(err => console.log(err))
+
+if (app) {
+    app.set("mongoose", mongoose);
+}
 // Initialize SERVER & DB connection once
 mongo.runDB(function (err, dbPort) {
     if (err) { throw err; }
@@ -44,6 +50,5 @@ mongo.runDB(function (err, dbPort) {
         console.log('MongoDB is running on port ' + dbPort);
         console.log('Express server listening on port ' + server.address().port);
     });
-
 });
 

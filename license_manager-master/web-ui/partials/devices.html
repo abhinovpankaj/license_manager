@@ -16,6 +16,10 @@
                 <a role="button" class="btn btn-primary btn-sm btn-block active col-xs-12 col-sm-2 col-md-2 col-lg-2"
                    href="/api/software/{{software._id}}/licenses/{{license._id}}/activations/{{item.activationId}}/license_file/">Download License File</a>
             </div>
+            <div>
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editModal" ng-click="edit(item)">Edit</button>
+                <button class="btn btn-danger" ng-click="deleteDevice(item)">Delete</button>
+            </div>
         </div>
     </div>
 </div>
@@ -39,4 +43,35 @@
             </div>
         </div>
     </form>
+</div>
+
+<!-- The Modal -->
+<div class="modal" id="editModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title">Edit Software</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <!-- Modal body -->
+            <form name="editForm" role="form" ng-submit="editForm.$valid && editDevice()" novalidate>
+            <div class="modal-body">
+                <div class="mb-3 mt-3">
+                    <label for="software_name" class="form-label" >Device Unique Id:</label>
+                    <input type="text" ng-model="current_activationId" class="form-control" id="software_name" placeholder="Enter software name" name="email" required>
+                </div>
+            </div>
+
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-primary"  data-bs-dismiss="modal" ng-disabled="editForm.$invalid">Save</button>
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+            </div>
+            </form>
+
+        </div>
+    </div>
 </div>

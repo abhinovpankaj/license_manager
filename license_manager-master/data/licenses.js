@@ -43,6 +43,23 @@ var getLicense = function (licenseId, callback) {
         callback(null, result);
     });
 };
+var deleteLicense = function (licenseId, callback) {
+    if (ObjectId.isValid(licenseId) === false) {
+        var error = new Error("Argument passed in must be a single String of 12 bytes or a string of 24 hex characters");
+        error.status = 500;
+        callback (error);
+        return;
+    }
+    mongo.Licenses.deleteOne({_id: new ObjectId(licenseId)}, function (err, res) {
+        if (err) {
+            var error2 = new Error("Error occurred. Didn't remove software. " + err.message);
+            error2.status = err.status;
+            callback (error2);
+            return;
+        }
+        callback(null);
+    })
+}
 var updateLicense = function (licenseId, softwareId, license, callback) {
     if (ObjectId.isValid(licenseId) === false) {
         var error = new Error("Argument passed in must be a single String of 12 bytes or a string of 24 hex characters");
@@ -100,5 +117,6 @@ module.exports = {
     addLicense: addLicense,
     getLicense: getLicense,
     updateLicense: updateLicense,
-    getAllLicenses: getAllLicenses
+    getAllLicenses: getAllLicenses,
+    deleteLicense
 };

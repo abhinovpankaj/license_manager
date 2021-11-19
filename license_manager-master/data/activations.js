@@ -61,6 +61,57 @@ var addActivation = function (licenseId, activationId, callback) {
         });
     });
 };
+
+var deleteActivation = function (licenseId, activationId, callback) {
+    licenses.getLicense(licenseId, function (err, license) {
+        if (err) {
+            callback(err);
+            return;
+        }
+        let tmp = [];
+        for (let  item of license.issuedLicenses) {
+            if (item.activationId != activationId)
+                tmp.push(item);
+        }
+
+        license.issuedLicenses = tmp;
+
+        mongo.Licenses.updateOne({
+            _id: new ObjectId(licenseId)
+        }, license,{w: 1}, function (err, result) {
+            if (err) {
+                callback(err);
+                return;
+            }
+            callback(null);
+        })
+
+    });
+}
+
+var updateActivation = function (licenseId, activationId, newId, callback) {
+    licenses.getLicense(licenseId, function (err, license) {
+        if (err) {
+            callback(err);
+            return;
+        }
+        for (let  item of license.issuedLicenses) {
+            if (item.activationId == activationId)
+                item.activationId = newId;
+        }
+
+        mongo.Licenses.updateOne({
+            _id: new ObjectId(licenseId)
+        }, license,{w: 1}, function (err, result) {
+            if (err) {
+                callback(err);
+                return;
+            }
+            callback(null);
+        })
+
+    });
+}
 var getActivation = function (activationId, licenseId, callback) {
     if (ObjectId.isValid(licenseId) === false) {
         var error1 = new Error("Argument passed in must be a single String of 12 bytes or a string of 24 hex characters");
@@ -128,5 +179,7 @@ module.exports = {
     addActivation: addActivation,
     getActivation: getActivation,
     getAllActivations: getAllActivations,
-    createActivationFile: createActivationFile
+    createActivationFile: createActivationFile,
+    updateActivation,
+    deleteActivation
 };

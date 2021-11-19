@@ -4,7 +4,9 @@
 /* jshint unused:true */
 "use strict";
 angular.module('appServices', []).factory('SoftwareFactory', function ($resource) {
-    return $resource('/api/software/:id', {id: '@_id'}, {update: {method: 'PUT'}});
+    return $resource('/api/software/:id', {id: '@_id'}, {
+        update: {method: 'PUT'}
+    });
 }).factory('LicensesFactory', function ($resource) {
     return $resource('/api/software/:softwareId/licenses/:id', {id: '@_id', softwareId: '@softwareId'}, {
         query: {method:'GET', isArray:true},
@@ -21,4 +23,9 @@ angular.module('appServices', []).factory('SoftwareFactory', function ($resource
         licenseId: '@licenseId',
         activationId: '@activationId'
     }, {});
+}).factory('HomeFactory', function ($resource) {
+    return $resource('/api/auth', {}, {
+        login: {method: 'POST'},
+        register: {method: 'PUT'}
+    })
 });

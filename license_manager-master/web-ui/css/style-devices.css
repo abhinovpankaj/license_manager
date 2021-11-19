@@ -5,7 +5,7 @@
     .table-title { padding: 5px 15px; }
     button{ margin-top: 10px; }
     /* Licenses, Devices, Software - begin */
-    .software-name, .name, .activation, .expiration, .license, .device, .download, .software-name{  width: 100%;  }
+    .software-name, .name, .activation, .expiration, .license, .device, .download, .software-name, .actions{  width: 100%;  }
     .order {  visibility: hidden;  display: none;  }
     .box-content-bottom{ padding: 5px; }
     .box-content-bottom form div{ font-size: small; }
@@ -19,7 +19,7 @@
     .table-title { padding: 5px 15px; }
     button{ margin-top: 10px; }
     /* Licenses, Devices, Software - begin */
-    .software-name, .name, .activation, .expiration, .license, .device, .download, .software-name{  width: 100%;  }
+    .software-name, .name, .activation, .expiration, .license, .device, .download, .software-name, .actions{  width: 100%;  }
     .order {  visibility: hidden;  display: none;  }
     .box-content-bottom form div{ font-size: small; }
     /* Licenses, Devices, Software - end */

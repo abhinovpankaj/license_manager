@@ -2,18 +2,23 @@
     <div class="table-title">Licenses for <b>{{software.name}}</b></div>
     <div class="container-fluid">
         <div class="row table-header">
-            <div class="order">#</div>
-            <div class="name">User / Organization Name</div>
-            <div class="activation">Allowed activations</div>
-            <div class="expiration">Expiration Date</div>
-            <div class="license">License</div>
+            <div class="col-xs-2 col-md-1">#</div>
+            <div class="col-xs-2 col-md-2">User / Organization Name</div>
+            <div class="col-xs-2 col-md-2">Allowed activations</div>
+            <div class="col-xs-2 col-md-2">Expiration Date</div>
+            <div class="col-xs-2 col-md-3">License</div>
+            <div class="col-xs-2 col-md-2">Actions</div>
         </div>
-        <div class="row table-body" ng-show="isShown==true" ng-repeat="item in licenses" go-to-url="software/{{software._id}}/licenses/{{item._id}}/devices">
-            <div class="order" ng-bind="$index+1+'.'"></div>
-            <div class="name" ng-bind="item.userOrganizationName"></div>
-            <div class="activation">{{item.issuedLicenses.length}} of {{item.allowedActivations}}</div>
-            <div class="expiration" ng-bind="item.expirationDate | date:'yyyy-MM-dd'"></div>
-            <div class="license" ng-bind="item.licenseUniqueID.value"></div>
+        <div class="row table-body" ng-show="isShown==true" ng-repeat="item in licenses" ng-dblclick="showDetail(item)">
+            <div class="col-xs-2 col-md-1" ng-bind="$index+1+'.'"></div>
+            <div class="col-xs-2 col-md-2" ng-bind="item.userOrganizationName"></div>
+            <div class="col-xs-2 col-md-2">{{item.issuedLicenses.length}} of {{item.allowedActivations}}</div>
+            <div class="col-xs-2 col-md-2" ng-bind="item.expirationDate | date:'yyyy-MM-dd'"></div>
+            <div class="col-xs-2 col-md-3" ng-bind="item.licenseUniqueID.value"></div>
+            <div class="col-xs-2 col-md-2">
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editModal" ng-click="edit(item)">Edit</button>
+                <button class="btn btn-danger" ng-click="deleteLicense(item)">Delete</button>
+            </div>
         </div>
     </div>
 </div>
@@ -56,4 +61,54 @@
             </div>
         </div>
     </form>
+</div>
+
+<!-- The Modal -->
+<div class="modal" id="editModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title">Edit Software</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <!-- Modal body -->
+            <form name="editForm" role="form" ng-submit="editLicense()" novalidate>
+            <div class="modal-body">
+                <div class="mb-3 mt-3">
+                    <label class="form-label">
+                        User / Organization Name:</label>
+                    <input type="text" class="form-control" ng-model="current_item.userOrganizationName"
+                     placeholder="Enter name" name="email" required>
+                </div>
+                <div class="mb-3 mt-3">
+                    <label class="form-label">Expiration Date:</label>
+                    <input ng-click="editOpen($event)" type="text" class="form-control" uib-datepicker-popup="{{format}}"
+                       ng-model="current_item.expirationDate"
+                       is-open="editStatus.opened" name="expirationDate"
+                       show-weeks="false" show-button-bar="false"
+                       datepicker-options="dateOptions" id="expirationDate" placeholder="Expiration date"
+                       close-text="Close" required />
+                </div>
+                <div class="mb-3 mt-3">
+                    <label class="form-label">
+                        Allowed Activations:</label>
+                    <input name="allowedActivations" ng-model="current_item.allowedActivations"
+                    type="number" class="form-control" ng-pattern="/^\+?([1-9]\d*)$/"
+                    id="allowedActivations" placeholder="Allowed activations"
+                    negative-integer-validator required />
+                </div>
+            </div>
+
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-primary"  data-bs-dismiss="modal" >Save</button>
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+            </div>
+            </form>
+
+        </div>
+    </div>
 </div>

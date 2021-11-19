@@ -14,6 +14,32 @@ var addSoftware = function (software, callback) {
         callback(null, result);
     });
 };
+
+
+const updateSoftware = function (software, callback) {
+    if (ObjectId.isValid(software.id) === false) {
+        var error = new Error("getSoftware(). \nMessage: Argument passed in must be a single String of 12 bytes or a string of 24 hex characters");
+        error.status = 500;
+        callback (error);
+        return;
+    }    
+    mongo.Software.findOne({ _id: new ObjectId(software.id) }, function (err, item) {
+        if (err) {
+            callback (err);
+            return;
+        }
+        if (item === null) {
+            var error = new Error("updateSoftware(). \nMessage: No Software Found. One Requested.");
+            error.status = 404;
+            callback (error);
+            return; 
+        }
+        item.name = software.name;
+        mongo.Software.update({_id: new ObjectId(software.id) }, item);
+        callback(null);
+    });
+}
+
 var getSoftware = function (softwareId, callback) {
     if (ObjectId.isValid(softwareId) === false) {
         var error = new Error("getSoftware(). \nMessage: Argument passed in must be a single String of 12 bytes or a string of 24 hex characters");
@@ -68,20 +94,9 @@ var removeSoftware = function (id, callback) {
             callback (error3);
             return;
         }
-        mongo.Licenses.deleteOne({softwareId: id}, {w:1}, function (err, result) {
-            if (err) {
-                var error4 = new Error("Error occurred. Didn't remove licenses. " + err.message);
-                error4.status = err.status;
-                callback (error4);
-                return;
-            }
-            if (result.deletedCount !== 1) {
-                var error5 = new Error("Didn't remove License. " + err.message);
-                error5.status = err.status;
-                callback (error5);
-                return;
-            }
+        mongo.Licenses.remove({softwareId: id},  function (err, result) {
             callback(null, result);
+            return;
         });
     });
 };
@@ -90,5 +105,6 @@ module.exports = {
     addSoftware: addSoftware,
     getSoftware: getSoftware,
     getAllSoftware: getAllSoftware,
-    removeSoftware: removeSoftware
+    removeSoftware: removeSoftware,
+    updateSoftware
 };

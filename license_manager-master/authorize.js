@@ -52,6 +52,6 @@ const verifyToken = function(roles=[])
     };
 }
 
-    
+
 
 module.exports = verifyToken;

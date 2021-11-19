@@ -4,7 +4,12 @@
 /* jshint unused:true */
 "use strict";
 angular.module('appConfigurations', []).config(function ($routeProvider) {
-    $routeProvider.when('/software', {
+    $routeProvider
+    .when('/home', {
+        templateUrl: 'partials/home.html',
+        controller: 'HomeController'
+    })
+    .when('/software', {
         templateUrl: 'partials/software.html',
         controller: 'SoftwareController'
     }).when('/software/:softwareId/licenses', {
@@ -16,6 +21,6 @@ angular.module('appConfigurations', []).config(function ($routeProvider) {
     }).when('/404', {
         templateUrl: 'partials/error.html'
     }).when('/', {
-        redirectTo: '/software'
+        redirectTo: '/home'
     }).otherwise({redirectTo: '/404'});
 });

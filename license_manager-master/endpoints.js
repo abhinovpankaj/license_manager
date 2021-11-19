@@ -11,6 +11,7 @@ var jwt = require('jsonwebtoken');
 const auth=require('./authorize')
 const Role=require('./data/role');
 const { nextTick } = require('process');
+const { RSA_NO_PADDING } = require('constants');
 
 
 require("dotenv").config();
@@ -23,7 +24,7 @@ function getAll(req, res) {
     });
 }
 router.route('/software')
-    .get(auth(Role.Admin),getAll)
+    .get(getAll)
     .post(function (req, res) {
         software.addSoftware(req.body, function (err, result) {
             if (err) { res.status(err.status).send(err.message); }
@@ -38,7 +39,14 @@ router.route('/software/:softwareId')
             else { res.json(record); }
         });
     })
-    .put()
+    .put(function(req, res) {
+        software.updateSoftware(
+            {id:req.params.softwareId, name: req.body.name}, 
+            function (err) {
+            if (err) res.status(er.status).send(err.message);
+            else res.json({success:"success"});
+        })
+    })
     .delete(function (req, res) {
         software.removeSoftware(req.params.softwareId, function (err, result) {
             if (err) { res.status(err.status).send(err.message); }
@@ -76,7 +84,14 @@ router.route('/software/:softwareId/licenses/:licenseId')
             else { res.json(result); }
         });
     })
-    .delete();
+    .delete(function (req, res) {
+        licenses.deleteLicense(req.params.licenseId, function(err) {
+            if (err) 
+                res.status(err.status).send(err.message);
+            else
+                res.json({"success": "success"});
+        })
+    });
 
 //------------- ACTIVATIONS ------------------//
 router.route('/software/:softwareId/licenses/:licenseId/activations')
@@ -91,7 +106,22 @@ router.route('/software/:softwareId/licenses/:licenseId/activations')
             if (err) { res.status(err.status).send(err.message); }
             else { res.json(result); }
         });
-    });
+    })
+    .put(function (req, res) {
+        activations.updateActivation(req.params.licenseId, req.body.activationId, req.body.newActivationId,
+            function (err, result) {
+            if (err) { res.status(err.status).send(err.message); }
+            else { res.json(result); }
+        });
+    })
+    .delete(function (req, res){
+        activations.deleteActivation(req.params.licenseId, req.query.activationId,
+            function (err, result) {
+            if (err) { res.status(err.status).send(err.message); }
+            else { res.json(result); }
+        });
+    })
+
 router.route('/software/:softwareId/licenses/:licenseId/activations/:activationId')
     .get(function (req, res) {
         activations.getActivation(req.params.activationId, req.params.licenseId, function (err, result) {

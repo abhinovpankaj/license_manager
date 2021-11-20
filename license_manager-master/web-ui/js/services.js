@@ -28,4 +28,6 @@ angular.module('appServices', []).factory('SoftwareFactory', function ($resource
         login: {method: 'POST'},
         register: {method: 'PUT'}
     })
+}).factory('authorizationService', function ($resource, $q, $rootScope, $location) {
+    
 });

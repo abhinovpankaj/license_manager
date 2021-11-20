@@ -4,6 +4,11 @@
 /* jshint unused:true */
 "use strict";
 angular.module('appControllers', []).controller('SoftwareController', function ($scope,$location, SoftwareFactory) {
+    let ur = localStorage.getItem("ur");
+    let token = localStorage.getItem("licensemanage_token")
+    if (ur != "admin" || !token)
+        $location.path("/home");
+
     $scope.current = null;
     $scope.current_name = "";
 
@@ -51,7 +56,8 @@ angular.module('appControllers', []).controller('SoftwareController', function (
     $scope.status = new HomeFactory();
     
     let token = localStorage.getItem("licensemanage_token");
-    if (token) {
+    let ur = localStorage.getItem("ur");
+    if (!token && ur == "admin") {
         $location.path('/software')
     }
     $scope.loginInfo = {};
@@ -65,7 +71,11 @@ angular.module('appControllers', []).controller('SoftwareController', function (
                 alert (res.msg);
             } else {
                 localStorage.setItem("licensemanage_token", res.token);
-                $location.path("/software");
+                localStorage.setItem("ur", res.role);
+                if (ur == "user")
+                    $location.path("");
+                else
+                    $location.path("/software");
             }
         });
     }
@@ -86,6 +96,10 @@ angular.module('appControllers', []).controller('SoftwareController', function (
     }
 })
 .controller('LicensesController', function ($scope, $location, $routeParams, SoftwareFactory, LicensesFactory) {
+    let ur = localStorage.getItem("ur");
+    let token = localStorage.getItem("licensemanage_token")
+    if (!token)
+        $location.path("/home");
     $scope.isShown = false;
     $scope.getLicenses = function () {
         $scope.licenses = LicensesFactory.query({softwareId: $routeParams.softwareId}, function (data) {
@@ -147,6 +161,10 @@ angular.module('appControllers', []).controller('SoftwareController', function (
     $scope.showButtonBar = false;
 
 }).controller('DevicesController', function ($http, $scope, $routeParams, SoftwareFactory, DevicesFactory, LicensesFactory) {
+    let ur = localStorage.getItem("ur");
+    let token = localStorage.getItem("licensemanage_token")
+    if (ur != "admin" || !token)
+        $location.path("/home");
     $scope.software = SoftwareFactory.get({id: $routeParams.softwareId});
     $scope.isShown = false;
     $scope.getLicense = function () {

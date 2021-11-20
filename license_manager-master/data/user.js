@@ -8,6 +8,7 @@ const userSchema = new mongoose.Schema({
   email: { type: String, unique: true },
   password: { type: String },
   token: { type: String },
+  role: {type: String, default: 'user'}
 });
 //-----------------------USER--------------------
 userSchema.methods.hashPassword = async (password) => {

@@ -52,6 +52,8 @@ router.route('/auth')
                             res.status(200).json({
                                 success: true,
                                 token: token,
+
+                                role: user.role,
                                 userCredentials: user
                             })
                         }

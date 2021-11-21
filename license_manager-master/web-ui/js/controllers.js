@@ -71,11 +71,15 @@ angular.module('appControllers', []).controller('SoftwareController', function (
                 alert (res.msg);
             } else {
                 localStorage.setItem("licensemanage_token", res.token);
+
                 localStorage.setItem("ur", res.role);
                 if (ur == "user")
                     $location.path("");
                 else
                     $location.path("/software");
+
+                $location.path("/software");
+
             }
         });
     }

@@ -17,6 +17,7 @@ var addSoftware = function (software, callback) {
 
 
 const updateSoftware = function (software, callback) {
+    console.log('software===>',software);
     if (ObjectId.isValid(software.id) === false) {
         var error = new Error("getSoftware(). \nMessage: Argument passed in must be a single String of 12 bytes or a string of 24 hex characters");
         error.status = 500;

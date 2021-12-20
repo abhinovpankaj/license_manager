@@ -21,6 +21,8 @@ var runDB = function (callback) {
         module.exports.Software = db.collection('software');
         module.exports.Licenses = db.collection('licenses');
         module.exports.Users = db.collection('users');
+        module.exports.ClientInfo = db.collection('clientInfo');
+
         callback (err, getdbPort());
     });
     // mongoose.connect(getdbUrl(), {

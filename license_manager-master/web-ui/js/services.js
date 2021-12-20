@@ -4,20 +4,86 @@
 /* jshint unused:true */
 "use strict";
 angular.module('appServices', []).factory('SoftwareFactory', function ($resource) {
+    let token = localStorage.getItem("licensemanage_token")
+    // return $resource('/api/software/:id', {id: '@_id'}, {
+    //     update: {
+    //         method: 'PUT',
+    //         headers: {
+    //             'x-access-token': token
+    //         }
+    //     }
+    // });
+    
     return $resource('/api/software/:id', {id: '@_id'}, {
-        update: {method: 'PUT'}
+        
+        query: {
+            method:'GET', isArray:true,
+            headers: {
+                'x-access-token': token
+            }
+        },
+        save: {
+            method: 'POST',
+            headers: {
+                'x-access-token': token
+            }
+        },
+        update: {
+            method: 'PUT',
+            headers: {
+                'x-access-token': token
+            }
+        },
+        delete: {
+            method: 'DELETE',
+            headers: {
+                'x-access-token': token
+            }
+        }
+    });
+}).factory('ClientInfoFactory', function ($resource) {
+    let token = localStorage.getItem("licensemanage_token")
+    return $resource('/api/getClientInfo', {}, {
+        query: {method: 'GET', isArray:true,
+        headers: {
+            'x-access-token': token
+        }
+    }
     });
 }).factory('LicensesFactory', function ($resource) {
+    let token = localStorage.getItem("licensemanage_token")
     return $resource('/api/software/:softwareId/licenses/:id', {id: '@_id', softwareId: '@softwareId'}, {
-        query: {method:'GET', isArray:true},
-        update: {method: 'PUT'}
+        query: {
+            method:'GET', isArray:true,
+            headers: {
+                'x-access-token': token
+            }
+        },
+        update: {
+            method: 'PUT',
+            headers: {
+                'x-access-token': token
+            }
+        }
     });
 }).factory('DevicesFactory', function ($resource) {
+    let token = localStorage.getItem("licensemanage_token")
     return $resource('/api/software/:softwareId/licenses/:licenseId/activations/:id', {id: '@_id', softwareId: '@softwareId', licenseId: '@licenseId'}, {
-        query: {method:'GET', isArray:true},
-        update: {method: 'PUT'}
+        query: {
+            method:'GET', isArray:true,
+            headers: {
+                'x-access-token': token
+            }
+    },
+        update: {
+            method: 'PUT',
+            headers: {
+                'x-access-token': token
+            }
+        }
     });
 }).factory('LicenseFileFactory', function ($resource) {
+    let token = localStorage.getItem("licensemanage_token")
     return $resource('/api/software/:softwareId/licenses/:licenseId/activations/:activationId/license_file', {
         softwareId: '@softwareId',
         licenseId: '@licenseId',

@@ -6,8 +6,70 @@
       Here we can download software device license.</p>
   </div>
   <p class="mt-1">You are not logined</p>
-  <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#loginModal">Login</button>
-  <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#registerModal">Register</button>
+  <!-- <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#loginModal">Login</button> -->
+  <!-- <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#registerModal">Register</button> -->
+
+  <div ng-if="isLogin">
+    <div >
+      <h4 >Login</h4>
+    </div>
+    <div  class="mb-3 mt-3">
+      <label for="email" class="form-label">Email:</label> 
+      <input type="text" ng-model="loginInfo.email" class="form-control" id="email" placeholder="Enter email" name="email" required>
+    </div>
+    <div class="mb-3">
+      <label for="pwd" class="form-label">Password:</label>
+      <input type="password" ng-model="loginInfo.password" class="form-control" id="pwd" placeholder="Enter password" name="pswd" required>
+    </div>
+    <button type="submit" class="btn btn-primary" data-bs-dismiss="modal" ng-click="login()">Login</button>
+</div>
+
+<div ng-if="!isLogin"   >
+
+  <!-- Modal Header -->
+  <div >
+    <h4 >Register</h4>
+  </div>
+
+  <!-- Modal body -->
+  <div >
+      <div class="alert alert-danger" ng-if="errorMessage">
+        <strong>Error!</strong> You should {{ errorMessage }}
+      </div>
+      <div class="mb-3 mt-3">
+        <label for="firstname" class="form-label">First Name:</label>
+        <input type="text" ng-model="registerInfo.first_name" class="form-control" id="firstname" placeholder="Enter firstname" name="firstname" required>
+      </div>
+      <div class="mb-3">
+        <label for="secondname" class="form-label">Last Name:</label>
+        <input type="text" ng-model="registerInfo.last_name" class="form-control" id="secondname" placeholder="Enter secondname" name="secondname" required>
+      </div>
+      <div class="mb-3">
+        <label for="email" class="form-label">Email:</label>
+        <input type="email" ng-model="registerInfo.email" class="form-control" id="email" placeholder="Enter email" name="email" required>
+      </div>
+      <div class="mb-3">
+        <label for="pwd" class="form-label">Password:</label>
+        <input type="password" ng-model="registerInfo.password" class="form-control" id="pwd" placeholder="Enter password" name="pswd" required>
+      </div>
+      <div class="mb-3">
+        <label for="pwd" class="form-label">Password Confirm:</label>
+        <input type="password" ng-model="registerInfo.passwordConfirm" class="form-control" id="pwd" placeholder="Enter password" name="pswd" required>
+      </div>
+      <button type="submit" class="btn btn-primary" data-bs-dismiss="modal"  ng-click="register()">Register</button>
+  </div>
+
+</div>
+
+<div style="display: flex;align-items: center;justify-content: center;">
+    <div ng-if="isLogin">
+      Don’t have an account? &nbsp;<a style="color: blue;text-decoration: underline;" ng-click="loginToggle(e);"  >Sign Up </a>
+    </div>
+    <div ng-if="!isLogin">
+    Already have an account? &nbsp;<a style="color: blue;text-decoration: underline;" ng-click="loginToggle(e);"  > Login </a>
+
+    </div>
+</div>
 </div>
 
 <div class="modal" id="loginModal">
@@ -38,42 +100,6 @@
 
 <div class="modal" id="registerModal">
   <div class="modal-dialog">
-    <div class="modal-content">
-
-      <!-- Modal Header -->
-      <div class="modal-header">
-        <h4 class="modal-title">Register</h4>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-      </div>
-
-      <!-- Modal body -->
-      <div class="modal-body">
-          <div class="alert alert-danger" ng-if="errorMessage">
-            <strong>Error!</strong> You should {{ errorMessage }}
-          </div>
-          <div class="mb-3 mt-3">
-            <label for="firstname" class="form-label">First Name:</label>
-            <input type="text" ng-model="registerInfo.first_name" class="form-control" id="firstname" placeholder="Enter firstname" name="firstname" required>
-          </div>
-          <div class="mb-3">
-            <label for="secondname" class="form-label">Last Name:</label>
-            <input type="text" ng-model="registerInfo.last_name" class="form-control" id="secondname" placeholder="Enter secondname" name="secondname" required>
-          </div>
-          <div class="mb-3">
-            <label for="email" class="form-label">Email:</label>
-            <input type="email" ng-model="registerInfo.email" class="form-control" id="email" placeholder="Enter email" name="email" required>
-          </div>
-          <div class="mb-3">
-            <label for="pwd" class="form-label">Password:</label>
-            <input type="password" ng-model="registerInfo.password" class="form-control" id="pwd" placeholder="Enter password" name="pswd" required>
-          </div>
-          <div class="mb-3">
-            <label for="pwd" class="form-label">Password Confirm:</label>
-            <input type="password" ng-model="registerInfo.passwordConfirm" class="form-control" id="pwd" placeholder="Enter password" name="pswd" required>
-          </div>
-          <button type="submit" class="btn btn-primary" data-bs-dismiss="modal"  ng-click="register()">Register</button>
-      </div>
-
-    </div>
+    
   </div>
 </div>

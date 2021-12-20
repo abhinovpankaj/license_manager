@@ -113,10 +113,124 @@ var getAllLicenses = function (softwareId, callback) {
     });
 };
 
+var checkLicense = function (body, callback) {
+    const {email,client_os_version,outlook_version } = body;
+
+    mongo.Licenses.find().toArray(async function (err, result) {
+        if (err) {
+            callback (err);
+            return;
+        }
+        if (result === null) {
+            var error = new Error("Message: No Licenses Found. All Requested.");
+            error.status = 404;
+            callback (error);
+            return; }
+
+        const currentLicense = [];
+        for( let item of result){
+            const {issuedLicenses, expirationDate} = item;
+            const issuedLicensesByEmail = issuedLicenses.filter(a=>a.email === email);
+            console.log('issuedLicensesByEmail',issuedLicenses,email);
+            if(issuedLicensesByEmail.length > 0 ){
+                currentLicense.push(item)
+                break;
+            }
+        }
+     
+        if(currentLicense.length === 0 ){
+            var error = new Error("No valid user found");
+            error.status = 404;
+            callback(error);
+        
+        }else{
+
+                
+            const {_id,issuedLicenses, licenseUniqueID ,expirationDate} = currentLicense[0];
+            const todaysDate = new Date().getTime();
+            const licExpirationDate = new Date(expirationDate).getTime();
+
+            const removedocs = await mongo.ClientInfo.remove({email:email});
+            mongo.ClientInfo.insert({
+                email,
+                lic_obj_id: _id,
+                licenseId: licenseUniqueID.value,
+                expirationDate: expirationDate,
+                client_os_version:client_os_version,
+                outlook_version:outlook_version,
+                request_time: new Date()
+
+            }, {w: 1}, function (err, result) {
+                if (err) {
+                    var error = new Error("Added Client Info. " + err.message);
+                    error.status = err.status;
+                    // callback (error);
+                    // return;
+                }
+                // callback(null, result);
+            });
+
+            if (todaysDate > licExpirationDate ){
+                var error = new Error("License is expired");
+                error.status = 404;
+                callback(null,{ message: 'License is expired, please contact your administrator', isValid: false });
+            }else{
+
+           
+    
+                callback(null,{ message: 'License is valid', isValid: true });
+                // callback(null,{ message: 'License is valid' });
+            }
+            
+         
+        }
+
+        // callback(null, result);
+    });
+};
+
+var getClientInfo = function (body, callback) {
+    const { } = body;
+
+    mongo.ClientInfo.find().toArray(async function (err, result) {
+        if (err) {
+            callback (err);
+            return;
+        }
+        if (result === null) {
+            var error = new Error("Message: No Client Info Found. All Requested.");
+            error.status = 404;
+            callback (error);
+            return; 
+        }else{
+
+            const resultArr = [];
+            for(let item of result){
+                const licenseInfo = await mongo.Licenses.findOne({ _id: new ObjectId(item.lic_obj_id) });
+                if(licenseInfo){
+                    const softwareInfo = await mongo.Software.findOne({ _id: new ObjectId(licenseInfo.softwareId) });
+                    resultArr.push({
+                        ...item,
+                        licenseInfo,
+                        softwareInfo
+                    })
+                }
+
+            }
+            // 
+            callback(null, resultArr); 
+        }
+
+        // callback(null, result);
+    });
+};
+
 module.exports = {
     addLicense: addLicense,
     getLicense: getLicense,
     updateLicense: updateLicense,
     getAllLicenses: getAllLicenses,
-    deleteLicense
+    deleteLicense,
+    checkLicense,
+    getClientInfo
 };

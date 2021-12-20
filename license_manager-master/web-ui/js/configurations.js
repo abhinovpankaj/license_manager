@@ -20,6 +20,9 @@ angular.module('appConfigurations', []).config(function ($routeProvider) {
         controller: 'DevicesController'
     }).when('/404', {
         templateUrl: 'partials/error.html'
+    }).when('/client-info', {
+        templateUrl: 'partials/clientInfo.html',
+        controller: 'ClientInfoController'
     }).when('/', {
         redirectTo: '/home'
     }).otherwise({redirectTo: '/404'});

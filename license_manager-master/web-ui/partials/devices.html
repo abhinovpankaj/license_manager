@@ -4,23 +4,28 @@
         <b ng-bind="license.userOrganizationName"></b>
     </div>
     <div class="container-fluid">
+      
         <div class="row table-header">
-            <div class="order">#</div>
-            <div class="device">Device Unique ID</div>
-            <div class="download"></div>
+            <div class="col-md-1 col-sm-1 col-xs-1">#</div>
+            <div class="col-md-3 col-sm-3 col-xs-3">Device Unique ID</div>
+            <div class="col-md-3 col-sm-3 col-xs-3">Email</div>
+            <div class="col-md-5 col-sm-5 col-xs-5"></div>
+
         </div>
-        <div class="row table-body" ng-show="isShown==true" ng-repeat="item in devices">
-            <div class="order" ng-bind="$index+1+'.'"></div>
-            <div class="device" ng-bind="item.activationId"></div>
-            <div class="download">
+        <div class="row table-body" ng-repeat="item in devices" >
+            <div class="col-md-1 col-sm-1 col-xs-1" ng-bind="$index+1+'.'"></div>
+            <div class="col-md-3 col-sm-3 col-xs-3" ng-bind="item.activationId"></div>
+            <div class="col-md-3 col-sm-3 col-xs-3" ng-bind="item.email"></div>
+            <div  class="col-md-5    col-sm-5 col-xs-5"   style="display: flex;align-items: flex-end;justify-content: flex-end;">
                 <a role="button" class="btn btn-primary btn-sm btn-block active col-xs-12 col-sm-2 col-md-2 col-lg-2"
-                   href="/api/software/{{software._id}}/licenses/{{license._id}}/activations/{{item.activationId}}/license_file/">Download License File</a>
+                  ng-click="downloadFile(item);" >Download License File</a>
             </div>
-            <div>
+            <!-- <div class="col-md-2 col-sm-2 col-xs-2">
                 <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editModal" ng-click="edit(item)">Edit</button>
-                <button class="btn btn-danger" ng-click="deleteDevice(item)">Delete</button>
-            </div>
+                <button class="btn btn-danger" ng-click="deleteSoftware(item)">Delete</button>
+            </div> -->
         </div>
+
     </div>
 </div>
 <div class="box-content-bottom">
@@ -31,13 +36,18 @@
             Expiration Date: <b ng-bind="license.expirationDate | date:'yyyy/MM/dd'"></b>&nbsp;&nbsp;&nbsp;&nbsp;
             License ID: <b ng-bind="license.licenseUniqueID.value"></b>
         </div>
-        <div class="form-group">
+        <div class="form-group add-new-form">
             <div class="col-xs-12 col-sm-10 col-md-10 col-lg-10">
                 <label class="sr-only" for="activationId">Enter Device Unique ID</label>
                 <input name="activationId" id="activationId" ng-model="device.activationId" type="text" class="form-control"
                        placeholder="Enter Device Unique ID" ng-disabled="license.allowedActivations==license.issuedLicenses.length" required />
             </div>
-            <div class="col-xs-12 col-sm-2 col-md-2 col-lg-2">
+            <div class="col-xs-12 col-sm-10 col-md-10 col-lg-10 mt-3">
+                <label class="sr-only" for="activationId">Email</label>
+                <input name="activationId" id="email" ng-model="device.email" type="text" class="form-control"
+                       placeholder="Enter email" ng-disabled="license.allowedActivations==license.issuedLicenses.length" required />
+            </div>
+            <div class="col-xs-12 col-sm-2 col-md-2 col-lg-2 mt-3">
                 <button role="button" ng-disabled="isSaving || inputForm.$invalid" type="submit"
                         class="btn btn-primary btn-sm btn-block active">Activate</button>
             </div>

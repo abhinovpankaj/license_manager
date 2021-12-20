@@ -17,6 +17,7 @@ body {  font: 12px 'Lucida Sans Unicode', 'Trebuchet MS', Arial, Helvetica;  mar
 .form-horizontal::after, .form-horizontal::before{  clear: both;  }
 .form-control{ border: 1px solid #3097d1; }
 .activation-info{  color: #1c73a5;  font-size: medium;  font-weight: 200;  }
+.add-new-form {  display: flex; flex-direction: column; }
 .ng-valid.ng-dirty{  border-color: #78FA89;  }
 .btn.disabled, .btn[disabled], fieldset[disabled] .btn { opacity: 0.45; }
 .table-hover tr th {  background-color: rgba(57, 144, 218, 0.16);  color: #286090;  }

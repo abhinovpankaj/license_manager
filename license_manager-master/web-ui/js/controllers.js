@@ -3,7 +3,7 @@
 /* jshint strict: true */
 /* jshint unused:true */
 "use strict";
-angular.module('appControllers', []).controller('SoftwareController', function ($scope,$location, SoftwareFactory) {
+angular.module('appControllers',  ['ui.bootstrap']).controller('SoftwareController', function ($scope,$location, SoftwareFactory,ClientInfoFactory) {
     let ur = localStorage.getItem("ur");
     let token = localStorage.getItem("licensemanage_token")
     if (ur != "admin" || !token)
@@ -18,25 +18,44 @@ angular.module('appControllers', []).controller('SoftwareController', function (
     }
 
     $scope.isShown = false;
+    $scope.software = new SoftwareFactory();
+
     $scope.getSoftware = function () {
         $scope.softwares = SoftwareFactory.query(function (data) {
             if (data.length > 0) {$scope.isShown = true;}
         });
     };
+
+    $scope.getClientInfo = async function () {
+        $scope.clientInfo = ClientInfoFactory.query({}, function (data) {
+            if (data.length > 0) {
+            }
+        });
+    };
+
     $scope.getSoftware();
-    $scope.software = new SoftwareFactory();
+    $scope.getClientInfo();
+
     $scope.createSoftware = function () {
         $scope.isSaving = true;
         $scope.software.$save(function () {
             $scope.isSaving = false;
-            $scope.inputForm.$setPristine();
+            $scope?.inputForm?.$setPristine();
             $scope.getSoftware();
         });
     };
+
+    $scope.onNameChange = function($event){
+        // alert($event.target.value);
+        const {current_name} = $event;
+        $scope.current_name = current_name;
+        console.log('current_name',$scope.current_name);
+    }
+
     $scope.editSoftware = function () {
         $scope.current.name = $scope.current_name;
         $scope.current.$update(function () {
-            $scope.editForm.$setPristine();
+            $scope.editForm?.$setPristine();
             $scope.getSoftware();
         });
     }
@@ -64,6 +83,11 @@ angular.module('appControllers', []).controller('SoftwareController', function (
     $scope.registerInfo = {};
     $scope.errorMessage = "";
     
+    $scope.isLogin = true;
+
+    $scope.loginToggle = function (e) {
+        $scope.isLogin = !$scope.isLogin;
+    }
     $scope.login = function () {
         console.log($scope.loginInfo);
         $scope.status.$login({email: $scope.loginInfo.email, password: $scope.loginInfo.password}, function(res) {
@@ -117,7 +141,7 @@ angular.module('appControllers', []).controller('SoftwareController', function (
         $scope.current_item = {...item};
     }
     $scope.showDetail = function (item) {
-        let path = "software/" + $scope.software._id + "/licenses/" + item._id + "/devices";
+        let path = "software/" +  $routeParams.softwareId + "/licenses/" + item._id + "/devices";
         $location.path(path);
     }
     $scope.editLicense = function () {
@@ -126,7 +150,7 @@ angular.module('appControllers', []).controller('SoftwareController', function (
         $scope.current.allowedActivations = $scope.current_item.allowedActivations;
         console.log($scope.current);
         $scope.current.$update(function () {
-            $scope.editForm.$setPristine();
+            $scope.editForm?.$setPristine();
             $scope.getLicenses();
         })
     }
@@ -139,7 +163,7 @@ angular.module('appControllers', []).controller('SoftwareController', function (
     }
     $scope.getLicenses();
 
-    $scope.software = SoftwareFactory.get({id: $routeParams.softwareId});
+    $scope.software = SoftwareFactory.query({id: $routeParams.softwareId});
 
     $scope.license = new LicensesFactory();
     $scope.createLicense = function () {
@@ -169,7 +193,7 @@ angular.module('appControllers', []).controller('SoftwareController', function (
     let token = localStorage.getItem("licensemanage_token")
     if (ur != "admin" || !token)
         $location.path("/home");
-    $scope.software = SoftwareFactory.get({id: $routeParams.softwareId});
+    $scope.software = SoftwareFactory.query({id: $routeParams.softwareId});
     $scope.isShown = false;
     $scope.getLicense = function () {
         $scope.license = LicensesFactory.get({id: $routeParams.licenseId, softwareId: $routeParams.softwareId}, function () {
@@ -188,11 +212,14 @@ angular.module('appControllers', []).controller('SoftwareController', function (
         $scope.current.activationId = item.activationId;
         $scope.current_activationId = item.activationId;
     }
+    $scope.downloadFile = function (item) {
+        window.location.href = `/api/software/${ $routeParams.softwareId}/licenses/${$routeParams.licenseId}/activations/${item.activationId}/license_file/`
+    }
 
     $scope.editDevice = function () {
         $scope.current.newActivationId = $scope.current_activationId;
         $scope.current.$update(function () {
-            $scope.editForm.$setPristine();
+            $scope.editForm?.$setPristine();
             $scope.getLicense();
         })
     }
@@ -218,4 +245,4 @@ angular.module('appControllers', []).controller('SoftwareController', function (
             });
         } else { console.log('In $scope.createDevice, $scope.activeActivations <= 0'); }
     };
-});
+})

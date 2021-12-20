@@ -86,36 +86,66 @@ router.route('/auth')
             res.json({err});
         }
     })
-router.route('/software')
-    .get(getAll)
-    .post(function (req, res) {
+
+    router.get("/software",verifyToken, getAll);
+
+    router.post("/software",verifyToken, function (req, res, next) {
         software.addSoftware(req.body, function (err, result) {
             if (err) { res.status(err.status).send(err.message); }
             else { res.json(result); }
         });
     });
 
-router.route('/software/:softwareId')
-    .get(function (req, res) {
+
+
+
+    // router.route('/checkLicense',)
+    // .post(function (req, res) {
+    //     licenses.checkLicense(req.body, function (err, result) {
+    //         if (err) { res.status(err.status).send(err.message); }
+    //         else { res.json(result); }
+    //     });
+    // });
+
+    router.post("/checkLicense",verifyToken, function (req, res, next) {
+        licenses.checkLicense(req.body, function (err, result) {
+            if (err) { res.status(err.status).send(err.message); }
+            else { res.json(result); }
+        });
+    });
+
+    router.get("/getClientInfo",verifyToken, function (req, res, next) {
+        licenses.getClientInfo(req.body, function (err, result) {
+            if (err) { res.status(err.status).send(err.message); }
+            else { res.json(result); }
+        });
+    });
+
+    
+    router.get("/software/:softwareId",verifyToken, function (req, res, next) {
         software.getSoftware(req.params.softwareId, function (err, record) {
             if (err) { res.status(err.status).send(err.message); }
             else { res.json(record); }
         });
-    })
-    .put(function(req, res) {
+    });
+
+
+    router.put("/software/:softwareId",verifyToken, function (req, res, next) {
         software.updateSoftware(
             {id:req.params.softwareId, name: req.body.name}, 
             function (err) {
             if (err) res.status(er.status).send(err.message);
             else res.json({success:"success"});
         })
-    })
-    .delete(function (req, res) {
+    });
+
+    router.delete("/software/:softwareId",verifyToken, function (req, res, next) {
         software.removeSoftware(req.params.softwareId, function (err, result) {
             if (err) { res.status(err.status).send(err.message); }
             else { res.json(result); }
         });
     });
+
 //------------- LICENSES -----------------//
 router.route('/software/:softwareId/licenses')
     .get(function (req, res) {
@@ -165,7 +195,7 @@ router.route('/software/:softwareId/licenses/:licenseId/activations')
         });
     })
     .post(function (req, res) {
-        activations.addActivation(req.params.licenseId, req.body.activationId, function (err, result) {
+        activations.addActivation(req.params.licenseId, req.body.activationId,req.body.email, function (err, result) {
             if (err) { res.status(err.status).send(err.message); }
             else { res.json(result); }
         });
@@ -369,6 +399,24 @@ try {
   
 });
 
+function verifyToken (req, res, next)  {
+    console.log('inside verifyToken');
+    const token =
+      req.body.token || req.query.token || req.headers["x-access-token"];
+  
+    if (!token) {
+      return res.status(403).send("A token is required for authentication");
+    }
+    try {
+      const decoded = jwt.verify(token, "secret");
+      req.user = decoded;
+    } catch (err) {
+      return res.status(401).send("Invalid Token");
+    }
+    return next();
+  };
+
+  
 // Login
 router.route('/login')
 .post(async function (req, res)  {

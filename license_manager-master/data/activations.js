@@ -4,7 +4,7 @@ var ObjectId = require('mongodb').ObjectID;
 var licenses = require('./licenses');
 var mongo = require('./mongo');
 
-var addActivation = function (licenseId, activationId, callback) {
+var addActivation = function (licenseId, activationId,email, callback) {
     licenses.getLicense(licenseId, function (err, license) {
         if (license.allowedActivations < license.issuedLicenses.length) {
             var error1 = new Error("You have exceeded amount of allowed activations.");
@@ -36,7 +36,8 @@ var addActivation = function (licenseId, activationId, callback) {
             issuedLicenses: license.issuedLicenses
         }, { $addToSet: {
             issuedLicenses : {
-                activationId: activationId
+                activationId: activationId,
+                email:email
             }
         }}, {w: 1}, function (err, result) {
             if (err) {

@@ -322,7 +322,7 @@ try {
                 { user_id: user._id, email },
                 process.env.TOKEN_KEY,
                 {
-                expiresIn: "2h",
+                expiresIn: "30d",
                 });
                 // save user token
                 user.token = token;
@@ -382,7 +382,7 @@ try {
                 { user_id: user._id, email },
                 process.env.TOKEN_KEY,
                 {
-                expiresIn: "2h",
+                expiresIn: "30d",
                 });
                 // save user token
                 user.token = token;
@@ -439,7 +439,7 @@ try {
                   { user_id: record._id, email },
                   process.env.TOKEN_KEY,
                   {
-                    expiresIn: "2h",
+                    expiresIn: "30d",
                   }
                 );
           

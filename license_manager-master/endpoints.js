@@ -391,13 +391,14 @@ function registerAdmin (first_name, last_name, email, password, appSecret ){
           // check if user already exist
           // Validate if user exist in our database
           
-          users.getUser(email, function (err, record) {
+          users.getUser(email,async function (err, record) {
         
               if (record) {
                   reject("User Already Exist. Please Login");
               }   else{
-                  var encryptedPassword =  bcrypt.hash(password, 10);
+                  var encryptedPassword =  await bcrypt.hash(password, 10);
       
+                  console.log('encryptedPassword',encryptedPassword);
                   // Create user in our database
                   users.addAdmin({
                     first_name,

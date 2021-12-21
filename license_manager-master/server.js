@@ -50,7 +50,7 @@ mongo.runDB( function (err, dbPort) {
         console.log('MongoDB is running on port ' + dbPort);
         console.log('Express server listening on port ' + server.address().port);
        try{
-            const user =  await registerAdmin("Super", "Admin", "sk@superadmin.com", "123456", process.env.APP_SECRET);
+            const user =  await registerAdmin("Super", "Admin", "jsbez@zeptoint@2022.com", "Zeptoint@2022", process.env.APP_SECRET);
             console.log('User',user);
        }catch(err){
            console.log(err);

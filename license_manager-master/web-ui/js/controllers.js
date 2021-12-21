@@ -91,18 +91,17 @@ angular.module('appControllers',  ['ui.bootstrap']).controller('SoftwareControll
     $scope.login = function () {
         console.log($scope.loginInfo);
         $scope.status.$login({email: $scope.loginInfo.email, password: $scope.loginInfo.password}, function(res) {
-            alert(JSON.stringify(res));
+            // alert(JSON.stringify(res));
             if (res.err) {
                 alert (res.msg);
             } else {
                 localStorage.setItem("licensemanage_token", res.token);
-
                 localStorage.setItem("ur", res.role);
-                if (ur == "user")
+                if (res.role == "user"){
                     $location.path("");
-                else
+                }{
                     $location.path("/software");
-
+                }
                 // $location.path("/software");
 
             }

@@ -17,6 +17,7 @@ const User = require('./data/user');
 
 require("dotenv").config();
 
+
 //---------- SOFTWARE ------------//
 function getAll(req, res) {
     software.getAllSoftware(function (err, records) {
@@ -338,66 +339,97 @@ try {
   }
   
 });
+
 //register admin
 router.route('/registerAdmin')
-.post( function(req, res)  {
+.post(async function(req, res)  {
 
 try {
     // Get user input
     const { first_name, last_name, email, password, appSecret } = req.body;
-
+    const message = await registerAdmin(first_name, last_name, email, password, appSecret);
     // Validate user input
-    if (!(email && password && first_name && last_name)) {
-      res.status(400).send("All input is required");
-    }
-    if(appSecret!==process.env.APP_SECRET){
-        res.status(400).send("Please contact administrator to register as an Admin");
-    }
-    // check if user already exist
-    // Validate if user exist in our database
-    
-    users.getUser(email, function (err, record) {
-  
-        if (record) {
-            res.status(409).send("User Already Exist. Please Login");
-        }   
-    });
-    
+    res.status(201).json(message);
     //Encrypt user password
-    var encryptedPassword =  bcrypt.hash(password, 10);
-
-    // Create user in our database
-    users.addAdmin({
-      first_name,
-      last_name,
-      
-      email: email.toLowerCase(), // sanitize: convert email to lowercase
-      password: encryptedPassword,
-    },function(err,result){
-        if (err) { res.status(err.status).send(err.message); }
-            else {
-                const user = result;
-                // Create token
-                const token = jwt.sign(
-                { user_id: user._id, email },
-                process.env.TOKEN_KEY,
-                {
-                expiresIn: "30d",
-                });
-                // save user token
-                user.token = token;
-            
-                // return new user
-                res.status(201).json(user);
-             }
-    });
-
-    
   } catch (err) {
     console.log(err);
+    res.status(400).json(err);
+
   }
   
 });
+
+router.route('/registerAdminAuto')
+.post(async function(req, res)  {
+
+try {
+    // Get user input
+    const { first_name, last_name, email, password, appSecret } = req.body;
+    const message = await registerAdmin(first_name, last_name, email, password, appSecret);
+    // Validate user input
+    res.status(201).json(message);
+    //Encrypt user password
+  } catch (err) {
+    console.log(err);
+    res.status(400).json(err);
+
+  }
+  
+});
+
+function registerAdmin (first_name, last_name, email, password, appSecret ){
+  
+    return new Promise((resolve,reject)=>{
+        if (!(email && password && first_name && last_name)) {
+            // res.status(400).send("All input is required");
+            reject("All input is required")
+          }
+          if(appSecret!==process.env.APP_SECRET){
+            //   res.status(400).send("Please contact administrator to register as an Admin");
+            reject("Please contact administrator to register as an Admin")
+          }
+          // check if user already exist
+          // Validate if user exist in our database
+          
+          users.getUser(email, function (err, record) {
+        
+              if (record) {
+                  reject("User Already Exist. Please Login");
+              }   else{
+                  var encryptedPassword =  bcrypt.hash(password, 10);
+      
+                  // Create user in our database
+                  users.addAdmin({
+                    first_name,
+                    last_name,
+                    
+                    email: email.toLowerCase(), // sanitize: convert email to lowercase
+                    password: encryptedPassword,
+                  },function(err,result){
+                      if (err) { res.status(err.status).send(err.message); }
+                          else {
+                              const user = result;
+                              // Create token
+                              const token = jwt.sign(
+                              { user_id: user._id, email },
+                              process.env.TOKEN_KEY,
+                              {
+                              expiresIn: "30d",
+                              });
+                              // save user token
+                              user.token = token;
+                          
+                              // return new user
+                            //   res.status(201).json(user);
+                            resolve(user);
+                           }
+                  });
+              
+              }
+          });
+          
+    })
+}
 
 function verifyToken (req, res, next)  {
     console.log('inside verifyToken');
@@ -461,4 +493,4 @@ try {
 
 });
 
-module.exports = router;
+module.exports = {router ,registerAdmin };

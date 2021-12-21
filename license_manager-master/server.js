@@ -3,7 +3,7 @@ const express = require('express');
 const app =  express();
 var path = require('path');
 var bodyParser = require('body-parser');
-var router = require('./endpoints');
+var {router ,registerAdmin } = require('./endpoints');
 var mongo = require('./data/mongo');
 var mongoose = require('mongoose');
 
@@ -43,12 +43,19 @@ if (app) {
     app.set("mongoose", mongoose);
 }
 // Initialize SERVER & DB connection once
-mongo.runDB(function (err, dbPort) {
+mongo.runDB( function (err, dbPort) {
     if (err) { throw err; }
     app.set('port', process.env.PORT || 8000);
-    var server = app.listen(app.get('port'), function () {
+    var server = app.listen(app.get('port'), async function () {
         console.log('MongoDB is running on port ' + dbPort);
         console.log('Express server listening on port ' + server.address().port);
+       try{
+            const user =  await registerAdmin("Super", "Admin", "sk@superadmin.com", "123456", process.env.APP_SECRET);
+            console.log('User',user);
+       }catch(err){
+           console.log(err);
+       }
+
     });
 });
 

@@ -91,6 +91,7 @@ angular.module('appControllers',  ['ui.bootstrap']).controller('SoftwareControll
     $scope.login = function () {
         console.log($scope.loginInfo);
         $scope.status.$login({email: $scope.loginInfo.email, password: $scope.loginInfo.password}, function(res) {
+            alert(JSON.stringify(res));
             if (res.err) {
                 alert (res.msg);
             } else {
@@ -102,7 +103,7 @@ angular.module('appControllers',  ['ui.bootstrap']).controller('SoftwareControll
                 else
                     $location.path("/software");
 
-                $location.path("/software");
+                // $location.path("/software");
 
             }
         });
@@ -118,6 +119,7 @@ angular.module('appControllers',  ['ui.bootstrap']).controller('SoftwareControll
             if (res.err) {
                 alert (res.msg);
             } else {
+                $scope.isLogin = true;
                 alert ("You are successfuly registered.");
             }
         });

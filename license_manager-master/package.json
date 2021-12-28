@@ -33,11 +33,6 @@
   "keywords": [
     "Licene",
     "Manager"
-  ],
-  "author": "Olga Voitovych",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/doleks/license_manager/issues"
-  },
-  "homepage": "https://github.com/doleks/license_manager#readme"
+  ]
+  
 }

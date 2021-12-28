@@ -90,22 +90,19 @@ angular.module('appControllers',  ['ui.bootstrap']).controller('SoftwareControll
     }
     $scope.login = function () {
         console.log($scope.loginInfo);
-        $scope.status.$login({email: $scope.loginInfo.email, password: $scope.loginInfo.password}, function(res) {
-            // alert(JSON.stringify(res));
-            if (res.err) {
-                alert (res.msg);
-            } else {
-                localStorage.setItem("licensemanage_token", res.token);
-                localStorage.setItem("ur", res.role);
-                if (res.role == "user"){
-                    $location.path("");
-                }{
-                    $location.path("/software");
-                }
-                // $location.path("/software");
-
+        $scope.status.$login({email: $scope.loginInfo.email, password: $scope.loginInfo.password})
+        .then(res=>{
+            localStorage.setItem("licensemanage_token", res.token);
+            localStorage.setItem("ur", res.role);
+            if (res.role == "user"){
+                $location.path("");
+            }{
+                $location.path("/software");
             }
-        });
+        }).catch(err=>{
+            alert(err?.data?.err);
+            console.log('err====>',err);
+        })
     }
 
     $scope.register = function () {

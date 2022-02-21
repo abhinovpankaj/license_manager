@@ -50,8 +50,25 @@ mongo.runDB( function (err, dbPort) {
         console.log('MongoDB is running on port ' + dbPort);
         console.log('Express server listening on port ' + server.address().port);
        try{
-            const user =  await registerAdmin("Super", "Admin", "jsbez@zeptoint@2022.com", "Zeptoint@2022", process.env.APP_SECRET);
-            console.log('User',user);
+            registerAdmin("Super", "Admin", "jabez@zeptoint.com", "Zeptoint@2022", process.env.APP_SECRET,function(err,result){
+                if (err) { console.log(err.status +":"+ err.message); }
+        else {
+            const user = result;
+                // Create token
+                const token = jwt.sign(
+                { user_id: user._id, email },
+                process.env.TOKEN_KEY,
+                {
+                expiresIn: "30d",
+                });
+                // save user token
+                user.token = token;
+            
+                // return new user
+                console.log(json(user));
+        }
+            });
+            
        }catch(err){
            console.log(err);
        }

@@ -1,6 +1,6 @@
 "use strict";
 var MongoClient = require('mongodb').MongoClient;
-var connection = require('./connection.json').development;
+var connection = require('./connection.json').production;
 const mongoose = require("mongoose");
 var assert = require('assert');
 const getdbUrl = function (){
@@ -10,6 +10,8 @@ const getdbUrl = function (){
     } else {
         url = 'mongodb://' + connection.user + ':' + connection.password + '@' + connection.url + ':' + connection.port + '/' + connection.db;
     }
+    //
+    url="mongodb://LicenceDbAdmin:Admin91@cluster0-shard-00-00.60uuo.mongodb.net:27017,cluster0-shard-00-01.60uuo.mongodb.net:27017,cluster0-shard-00-02.60uuo.mongodb.net:27017/myFirstDatabase?ssl=true&replicaSet=atlas-145abf-shard-0&authSource=admin&retryWrites=true&w=majority";
     return url;
 }
 function getdbPort(){
@@ -25,19 +27,7 @@ var runDB = function (callback) {
 
         callback (err, getdbPort());
     });
-    // mongoose.connect(getdbUrl(), {
-    //     useNewUrlParser: true,
-    //     useUnifiedTopology: true
-        
-    //     })
-    //     .then(() => {
-    //     console.log("Successfully connected to database via mongoose");
-    //     })
-    //     .catch((error) => {
-    //     console.log("database connection failed. exiting now...");
-    //     console.error(error);
-    //     process.exit(1);
-    //     });
+   
 };
 
 module.exports = {

@@ -35,9 +35,9 @@ var getUser = function (emailId, callback) {
             return;
         }
         if (result === null) {
-            var error = new Error("getUser(). \nMessage: No User Found. One Requested.");
-            error.status = 404;
-            callback (error);
+            var error1 = new Error("getUser(). \nMessage: No User Found. One Requested.");
+            error1.status = 404;
+            callback (error1);
             return; 
         }
         callback(null, result);

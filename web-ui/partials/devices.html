@@ -16,14 +16,14 @@
             <div class="col-md-1 col-sm-1 col-xs-1" ng-bind="$index+1+'.'"></div>
             <div class="col-md-3 col-sm-3 col-xs-3" ng-bind="item.activationId"></div>
             <div class="col-md-3 col-sm-3 col-xs-3" ng-bind="item.email"></div>
-            <div  class="col-md-5    col-sm-5 col-xs-5"   style="display: flex;align-items: flex-end;justify-content: flex-end;">
+            <div  class="col-md-3    col-sm-5 col-xs-3"   style="display: flex;align-items: flex-end;justify-content: flex-end;">
                 <a role="button" class="btn btn-primary btn-sm btn-block active col-xs-12 col-sm-2 col-md-2 col-lg-2"
                   ng-click="downloadFile(item);" >Download License File</a>
             </div>
-            <!-- <div class="col-md-2 col-sm-2 col-xs-2">
-                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editModal" ng-click="edit(item)">Edit</button>
-                <button class="btn btn-danger" ng-click="deleteSoftware(item)">Delete</button>
-            </div> -->
+            <div class="col-md-2 col-sm-2 col-xs-2" style="display: flex;align-items: flex-end;justify-content: flex-end;">
+                <button class="btn btn-primary btn-sm  " data-bs-toggle="modal" data-bs-target="#editModal" ng-click="edit(item)">Edit</button>
+                <button class="btn btn-danger btn-sm  "  style="margin-left: 2px;" ng-click="deleteDevice(item)">Delete</button>
+            </div>
         </div>
 
     </div>

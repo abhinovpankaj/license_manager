@@ -15,7 +15,7 @@ angular.module('appConfigurations', []).config(function ($routeProvider) {
     }).when('/software/:softwareId/licenses', {
         templateUrl: 'partials/licenses.html',
         controller: 'LicensesController'
-    }).when('/software/:softwareId/licenses/:licenseId/devices', {
+    }).when('/software/:softwareId/licenses/:licenseId/activations', {
         templateUrl: 'partials/devices.html',
         controller: 'DevicesController'
     }).when('/404', {

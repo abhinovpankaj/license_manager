@@ -90,7 +90,7 @@ router.route('/auth')
 
     router.get("/software",verifyToken, getAll);
 
-    router.post("/software",verifyToken, function (req, res, next) {
+    router.post("/software",verifyToken, function (req, res) {
         software.addSoftware(req.body, function (err, result) {
             if (err) { res.status(err.status).send(err.message); }
             else { res.json(result); }
@@ -98,14 +98,14 @@ router.route('/auth')
     });
 
 
-    router.post("/checkLicense",verifyToken, function (req, res, next) {
+    router.post("/checkLicense",verifyToken, function (req, res) {
         licenses.checkLicense(req.body, function (err, result) {
             if (err) { res.status(err.status).send(err.message); }
             else { res.json(result); }
         });
     });
 
-    router.get("/getClientInfo",verifyToken, function (req, res, next) {
+    router.get("/getClientInfo",verifyToken, function (req, res) {
         licenses.getClientInfo(req.body, function (err, result) {
             if (err) { res.status(err.status).send(err.message); }
             else { res.json(result); }
@@ -113,7 +113,7 @@ router.route('/auth')
     });
 
     
-    router.get("/software/:softwareId",verifyToken, function (req, res, next) {
+    router.get("/software/:softwareId",verifyToken, function (req, res) {
         software.getSoftware(req.params.softwareId, function (err, record) {
             if (err) { res.status(err.status).send(err.message); }
             else { res.json(record); }
@@ -121,7 +121,7 @@ router.route('/auth')
     });
 
 
-    router.put("/software/:softwareId",verifyToken, function (req, res, next) {
+    router.put("/software/:softwareId",verifyToken, function (req, res) {
         software.updateSoftware(
             {id:req.params.softwareId, name: req.body.name}, 
             function (err) {
@@ -130,7 +130,7 @@ router.route('/auth')
         })
     });
 
-    router.delete("/software/:softwareId",verifyToken, function (req, res, next) {
+    router.delete("/software/:softwareId",verifyToken, function (req, res) {
         software.removeSoftware(req.params.softwareId, function (err, result) {
             if (err) { res.status(err.status).send(err.message); }
             else { res.json(result); }
@@ -138,26 +138,27 @@ router.route('/auth')
     });
 
 //------------- LICENSES -----------------//
-router.route('/software/:softwareId/licenses')
-    .get(function (req, res) {
+//router.route('/software/:softwareId/licenses')
+
+router.get('/software/:softwareId/licenses',verifyToken, function (req, res) {
         licenses.getAllLicenses(req.params.softwareId, function (err, records) {
             if (err) { res.status(err.status).send(err.message); }
             else { res.json(records); }
         });
-    })
-    .post(function (req, res) {
+    });
+router.post('/software/:softwareId/licenses',verifyToken, function (req, res) {
         licenses.addLicense(req.body, function (err, result) {
             res.json(result);
         });
     });
-router.route('/software/:softwareId/licenses/:licenseId')
-    .get(function (req, res) {
+//router.route('/software/:softwareId/licenses/:licenseId')
+router.get('/software/:softwareId/licenses/:licenseId', verifyToken, function (req, res) {
         licenses.getLicense(req.params.licenseId, function (err, record) {
             if (err) { res.status(err.status).send(err.message); }
             else { res.json(record); }
         });
-    })
-    .put(function (req, res) {
+    });
+    router.put('/software/:softwareId/licenses/:licenseId', verifyToken,function (req, res) {
         var license = {};
         license.expirationDate = req.body.expirationDate;
         license.allowedActivations = req.body.allowedActivations;
@@ -167,8 +168,8 @@ router.route('/software/:softwareId/licenses/:licenseId')
             if (err) { res.status(err.status).send(err.message); }
             else { res.json(result); }
         });
-    })
-    .delete(function (req, res) {
+    });
+    router.delete('/software/:softwareId/licenses/:licenseId', verifyToken,function (req, res  ) {
         licenses.deleteLicense(req.params.licenseId, function(err) {
             if (err) 
                 res.status(err.status).send(err.message);
@@ -178,20 +179,26 @@ router.route('/software/:softwareId/licenses/:licenseId')
     });
 
 //------------- ACTIVATIONS ------------------//
+// router.get('/software/:softwareId/licenses/:licenseId/activations',verifyToken,function (req, res) {
+//     activations.getAllActivations(req.params.licenseId, req.params.softwareId, function (err, result) {
+//         if (err) { res.status(err.status).send(err.message); }
+//         else { res.json(result); }
+//     });
+// });
 router.route('/software/:softwareId/licenses/:licenseId/activations')
-    .get(function (req, res) {
+    .get(verifyToken,function (req, res) {
         activations.getAllActivations(req.params.licenseId, req.params.softwareId, function (err, result) {
             if (err) { res.status(err.status).send(err.message); }
             else { res.json(result); }
         });
     })
-    .post(function (req, res) {
+    .post(verifyToken,function (req, res) {
         activations.addActivation(req.params.licenseId, req.body.activationId,req.body.email, function (err, result) {
             if (err) { res.status(err.status).send(err.message); }
             else { res.json(result); }
         });
     })
-    .put(function (req, res) {
+    .put(verifyToken,function (req, res) {
         activations.updateActivation(req.params.licenseId, req.body.activationId, req.body.newActivationId,
             function (err, result) {
             if (err) { res.status(err.status).send(err.message); }
@@ -206,6 +213,12 @@ router.route('/software/:softwareId/licenses/:licenseId/activations')
         });
     })
 
+    router.get('/software/:softwareId/licenses/:licenseId/activationbyemail/:email',verifyToken, function(req,res){
+        activations.getActivationbyEmail(req.params.email, req.params.licenseId, function (err, result) {
+            if (err) { res.status(err.status).send(err.message); }
+            else { res.json(result); }
+    });
+});
 router.route('/software/:softwareId/licenses/:licenseId/activations/:activationId')
     .get(function (req, res) {
         activations.getActivation(req.params.activationId, req.params.licenseId, function (err, result) {
@@ -428,9 +441,9 @@ function registerAdmin  (first_name, last_name, email, password, appSecret, call
     };
 
 function verifyToken (req, res, next)  {
-    console.log('inside verifyToken');
+    //console.log('inside verifyToken');
     const token =
-      req.body.token || req.query.token || req.headers["x-access-token"];
+    req.body.token || req.query.token || req.headers["x-access-token"];
   
     if (!token) {
       return res.status(403).send("A token is required for authentication");
@@ -459,7 +472,8 @@ try {
     }
     // Validate if user exist in our database
     users.getUser( email ,function(err,record){
-        if (err) { res.status(err.status).send(err.message); }
+        if (err) { res.status(err.status).send(err.message); 
+        }
         else {
             if (record && ( bcrypt.compare(password, record.password))) {
                 // Create token

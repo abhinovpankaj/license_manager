@@ -24,6 +24,7 @@ var addLicense = function (license, callback) {
     });
 };
 var getLicense = function (licenseId, callback) {
+    //console.log('inside getLicesne');
     if (ObjectId.isValid(licenseId) === false) {
         var error = new Error("Argument passed in must be a single String of 12 bytes or a string of 24 hex characters");
         error.status = 500;
@@ -99,6 +100,7 @@ var updateLicense = function (licenseId, softwareId, license, callback) {
         });
 };
 var getAllLicenses = function (softwareId, callback) {
+    console.log('inside getALLLicesne');
     mongo.Licenses.find({softwareId: softwareId}).toArray(function (err, result) {
         if (err) {
             callback (err);

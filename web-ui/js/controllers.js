@@ -3,7 +3,8 @@
 /* jshint strict: true */
 /* jshint unused:true */
 "use strict";
-angular.module('appControllers',  ['ui.bootstrap']).controller('SoftwareController', function ($scope,$location, SoftwareFactory,ClientInfoFactory) {
+angular.module('appControllers',  ['ui.bootstrap']).controller('SoftwareController', 
+function ($scope,$location, SoftwareFactory,ClientInfoFactory) {
     let ur = localStorage.getItem("ur");
     let token = localStorage.getItem("licensemanage_token")
     if (ur != "admin" || !token)
@@ -122,13 +123,16 @@ angular.module('appControllers',  ['ui.bootstrap']).controller('SoftwareControll
     }
 })
 .controller('LicensesController', function ($scope, $location, $routeParams, SoftwareFactory, LicensesFactory) {
+    //console.log("inside licensecontroller");
     let ur = localStorage.getItem("ur");
     let token = localStorage.getItem("licensemanage_token")
-    if (!token)
+    if (ur != "admin" || !token)
         $location.path("/home");
+        
     $scope.isShown = false;
     $scope.getLicenses = function () {
         $scope.licenses = LicensesFactory.query({softwareId: $routeParams.softwareId}, function (data) {
+            
             if (data.length > 0) {$scope.isShown = true;}
         });
     };
@@ -138,10 +142,7 @@ angular.module('appControllers',  ['ui.bootstrap']).controller('SoftwareControll
         $scope.current = item;
         $scope.current_item = {...item};
     }
-    $scope.showDetail = function (item) {
-        let path = "software/" +  $routeParams.softwareId + "/licenses/" + item._id + "/devices";
-        $location.path(path);
-    }
+    
     $scope.editLicense = function () {
         $scope.current.userOrganizationName = $scope.current_item.userOrganizationName;
         $scope.current.expirationDate = $scope.current_item.expirationDate;
@@ -173,7 +174,10 @@ angular.module('appControllers',  ['ui.bootstrap']).controller('SoftwareControll
             $scope.getLicenses();
         });
     };
-
+    $scope.showDetail = function (item) {
+        let path = "software/" +  $routeParams.softwareId + "/licenses/" + item._id + "/activations";        
+        $location.path(path);
+    }
     //----- Date Picker ------//
     $scope.today = function() { $scope.dt = new Date(); };
     $scope.today();
@@ -186,7 +190,8 @@ angular.module('appControllers',  ['ui.bootstrap']).controller('SoftwareControll
     $scope.editOpen = function($event) {$scope.editStatus.opened = true;};
     $scope.showButtonBar = false;
 
-}).controller('DevicesController', function ($http, $scope, $routeParams, SoftwareFactory, DevicesFactory, LicensesFactory) {
+}).controller('DevicesController', function ($scope, $location, $routeParams, SoftwareFactory, DevicesFactory, LicensesFactory) {
+    console.log("inside Devices controller");
     let ur = localStorage.getItem("ur");
     let token = localStorage.getItem("licensemanage_token")
     if (ur != "admin" || !token)
@@ -212,8 +217,8 @@ angular.module('appControllers',  ['ui.bootstrap']).controller('SoftwareControll
     }
     $scope.downloadFile = function (item) {
         window.location.href = `/api/software/${ $routeParams.softwareId}/licenses/${$routeParams.licenseId}/activations/${item.activationId}/license_file/`
-    }
-
+    }   
+        
     $scope.editDevice = function () {
         $scope.current.newActivationId = $scope.current_activationId;
         $scope.current.$update(function () {
@@ -223,7 +228,7 @@ angular.module('appControllers',  ['ui.bootstrap']).controller('SoftwareControll
     }
 
     $scope.deleteDevice = function (item) {
-        if (confirm("Are you going to delete it?") == true) {
+        if (confirm("Do you want to delete it?") == true) {
             $scope.current.activationId = item.activationId;
             $scope.current.$remove({activationId: item.activationId}, function () {
                 $scope.getLicense();

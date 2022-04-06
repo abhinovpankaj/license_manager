@@ -26,10 +26,8 @@
   "scripts": {
     "start": "node server.js"
   },
-  
   "keywords": [
     "License",
     "Manager"
   ]
-  
 }

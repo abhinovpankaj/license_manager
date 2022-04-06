@@ -66,6 +66,22 @@ angular.module('appServices', []).factory('SoftwareFactory', function ($resource
             }
         }
     });
+}).factory('DevicesListFactory',function($resource){
+    let token = localStorage.getItem("licensemanage_token")
+    return $resource('/api/software/:softwareId/licenses/:id', {id: '@_id', softwareId: '@softwareId'}, {
+        query: {
+            method:'GET', isArray:true,
+            headers: {
+                'x-access-token': token
+            }
+        },
+        update: {
+            method: 'PUT',
+            headers: {
+                'x-access-token': token
+            }
+        }
+    });
 }).factory('DevicesFactory', function ($resource) {
     let token = localStorage.getItem("licensemanage_token")
     return $resource('/api/software/:softwareId/licenses/:licenseId/activations/:id', {id: '@_id', softwareId: '@softwareId', licenseId: '@licenseId'}, {
@@ -95,5 +111,10 @@ angular.module('appServices', []).factory('SoftwareFactory', function ($resource
         register: {method: 'PUT'}
     })
 }).factory('authorizationService', function ($resource, $q, $rootScope, $location) {
-    
+ 
+}).config(function($httpProvider) {
+    let token = localStorage.getItem("licensemanage_token")
+    $httpProvider.defaults.headers.common['x-access-token'] = token;
+    // For angular 1.5, use:  
+    // $httpProvider.defaults.headers.common['Authorization'] = token;        
 });

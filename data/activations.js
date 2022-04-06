@@ -113,6 +113,25 @@ var updateActivation = function (licenseId, activationId, newId, callback) {
 
     });
 }
+var getActivationbyEmail = function(emailId,licenseId, callback){
+    console.log("inside getactivationbyemail");
+    mongo.Licenses.findOne({
+        _id: new ObjectId(licenseId),
+        'issuedLicenses.email': emailId
+    }, function (err, record) {
+        if (err) {
+            callback (err);
+            return;
+        }
+        if (record === null) {
+            var error = new Error("No Activation Found.");
+            error.status = 404;
+            callback (error);
+            return;
+        }
+        callback(null, record);
+    });
+}
 var getActivation = function (activationId, licenseId, callback) {
     if (ObjectId.isValid(licenseId) === false) {
         var error1 = new Error("Argument passed in must be a single String of 12 bytes or a string of 24 hex characters");
@@ -179,6 +198,7 @@ var createActivationFile = function (softwareName, license, activationId) {
 module.exports = {
     addActivation: addActivation,
     getActivation: getActivation,
+    getActivationbyEmail: getActivationbyEmail,
     getAllActivations: getAllActivations,
     createActivationFile: createActivationFile,
     updateActivation,

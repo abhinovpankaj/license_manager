@@ -6,8 +6,8 @@ var mongo = require('./mongo');
 
 var addActivation = function (licenseId, activationId,email, callback) {
     licenses.getLicense(licenseId, function (err, license) {
-        if (license.allowedActivations < license.issuedLicenses.length) {
-            var error1 = new Error("You have exceeded amount of allowed activations.");
+        if (license.allowedActivations <= license.issuedLicenses.length) {
+            var error1 = new Error("You have reached the limit of allowed activations.");
             error1.status = 403;
             callback (error1);
             return;

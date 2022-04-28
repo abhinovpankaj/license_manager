@@ -6,12 +6,21 @@ var mongo = require('./mongo');
 
 var addActivation = function (licenseId, activationId,email, callback) {
     licenses.getLicense(licenseId, function (err, license) {
+
+        var CurrentDate = new Date();
+        if(license.expirationDat<CurrentDate) {
+            var expirationError = new Error("Your organizational license has expired, please connect with Provider.");
+            expirationError.status = 403;
+            callback (expirationError);
+            return;
+        }   
         if (license.allowedActivations <= license.issuedLicenses.length) {
             var error1 = new Error("You have reached the limit of allowed activations.");
             error1.status = 403;
             callback (error1);
             return;
         }
+          
         var actualActivation = license.issuedLicenses.filter(function (activation) {
             return activation.activationId === activationId;
         });
@@ -128,6 +137,15 @@ var getActivationbyEmail = function(emailId,licenseId, callback){
             error.status = 404;
             callback (error);
             return;
+        } 
+        else{
+            var currentDate = new Date();
+            if(record.expirationDate < currentDate){
+                var error = new Error("Organizational License expired.");
+                error.status = 404;
+                callback (error);
+                return;
+            }        
         }
         callback(null, record);
     });

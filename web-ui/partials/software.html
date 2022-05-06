@@ -10,9 +10,10 @@
                 </div>
                 <div class="row table-body" ng-repeat="item in softwares" ng-dblclick="seeDetail(item)">
                     <div class="col-md-1 col-sm-1 col-xs-1" ng-bind="$index+1+'.'"></div>
-                    <div class="col-md-9 col-sm-6 col-xs-6" ng-bind="item.name"></div>
-                    <div class="col-md-2 col-sm-5 col-xs-5">
-                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editModal" ng-click="edit(item)">Edit</button>
+                    <div class="col-md-8 col-sm-6 col-xs-6" ng-bind="item.name"></div>
+                    <div class="col-md-3 col-sm-5 col-xs-5">
+                        <button class="btn btn-primary"  data-bs-target="#editModal" ng-click="seeDetail(item)">Edit</button>
+                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editModal" ng-click="edit(item)">Edit Name</button>
                         <button class="btn btn-danger" ng-click="deleteSoftware(item)">Delete</button>
                     </div>
                 </div>

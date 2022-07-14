@@ -45,7 +45,7 @@ if (app) {
 // Initialize SERVER & DB connection once
 mongo.runDB( function (err, dbPort) {
     if (err) { throw err; }
-    app.set('port', process.env.PORT || 8000);
+    app.set('port', process.env.PORT || 1337);
     var server = app.listen(app.get('port'), async function () {
         console.log('MongoDB is running on port ' + dbPort);
         console.log('Express server listening on port ' + server.address().port);
